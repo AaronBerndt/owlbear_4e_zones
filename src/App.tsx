@@ -1,20 +1,12 @@
 import { useEffect, useState } from "react";
-import { isShape } from "@owlbear-rodeo/sdk";
 import OBR from "@owlbear-rodeo/sdk";
 import { isCollision } from "./utils/collision";
-import { Button, Container, Stack } from "@mui/material";
-import useCreateZone from "./hooks/useCreateZone";
+import { Card, Stack } from "@mui/material";
 import useUpdateZone from "./hooks/useUpdateZone";
+import CreateZoneForm from "./components/CreateZoneForm";
 
 function App() {
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-  });
-
   const [ready, setReady] = useState(false);
-  const { mutate: createZone } = useCreateZone();
   const { mutate: updateZone } = useUpdateZone();
 
   const checkForCollision = async () => {
@@ -43,29 +35,20 @@ function App() {
     });
   };
 
-  const onSubmit = async () => {
-    const shapes = await OBR.scene.items.getItems(isShape);
-    // const items = await OBR.scene.items.getItems();
-
-    // createZone({
-    //   combatId: "test",
-    //   effect: "test",
-    //   effectTrigger: "onEnter",
-    // });
-  };
-
   useEffect(() => {
-    console.log(OBR.isReady);
+    if (OBR.isAvailable && !OBR.isReady) {
+      OBR.onReady(() => setReady(true));
+    }
     if (OBR.isReady) {
       checkForCollision();
     }
-  }, [OBR.isReady]);
+  }, [ready]);
 
   return (
     <Stack>
-      <Container>
-        <Button onClick={onSubmit}>Submit</Button>
-      </Container>
+      <Card>
+        <CreateZoneForm />
+      </Card>
     </Stack>
   );
 }
