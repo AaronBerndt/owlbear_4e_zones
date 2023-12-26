@@ -14,7 +14,11 @@ import { TiDelete } from "react-icons/ti";
 import { conditions, damageTypes } from "../constants";
 import { EffectProperty } from "../types";
 
-export default function AddEffectForm({ effect }: Props) {
+export default function AddEffectForm({
+  effect,
+  effectId,
+  setSelectedEffectIndex,
+}: Props) {
   const effectPropertyWithDamageTypeList = [
     "Vulnerable",
     "Resist",
@@ -29,10 +33,18 @@ export default function AddEffectForm({ effect }: Props) {
     ...effectPropertyWithDamageTypeList.filter((name) => name !== "Immune"),
   ];
 
+  const triggerObject = {
+    "Enter Zone": "enterZone",
+    "Leave Zone": "leaveZone",
+    "Start of Round": "startOfRound",
+    "End of Round": "endOfRound",
+  };
+
   const durationObject = {
     "Save Ends": "saveEnds",
     "Enter Zone": "enterZone",
     "Leave Zone": "leaveZone",
+    "While in Zone": "whileInZone",
     "End of Encoutner": "endOfEncounter",
     "End of Round": "endOfRound",
     "Next Attack": "nextAttack",
@@ -49,7 +61,7 @@ export default function AddEffectForm({ effect }: Props) {
   return (
     <>
       <FieldArray
-        name="effectProperties"
+        name={`effects.${effectId}.effectProperties`}
         render={(arrayHelpers) => (
           <>
             {effect.effectProperties.map(
@@ -61,7 +73,7 @@ export default function AddEffectForm({ effect }: Props) {
                     </InputLabel>
                     <Field
                       as={Select}
-                      name={`effects.${effect}.effectProperties.${i}.name`}
+                      name={`effects.${effectId}.effectProperties.${i}.name`}
                     >
                       {orderBy(conditions, ["name"]).map(
                         (condition: any, i: number) => (
@@ -82,7 +94,7 @@ export default function AddEffectForm({ effect }: Props) {
 
                       <Field
                         as={Select}
-                        name={`effects.${effect}.effectProperties.${i}.value`}
+                        name={`effects.${effectId}.effectProperties.${i}.value`}
                       >
                         {range(-51, 51).map((damageValue, i) => (
                           <MenuItem value={damageValue} key={i}>
@@ -101,7 +113,7 @@ export default function AddEffectForm({ effect }: Props) {
                       </InputLabel>
                       <Field
                         as={Select}
-                        name={`effects.${effect}.effectProperties.${i}.damageType`}
+                        name={`effects.${effectId}.effectProperties.${i}.damageType`}
                       >
                         {damageTypes.map((damageType, i) => (
                           <option value={damageType} key={i}>
@@ -131,24 +143,43 @@ export default function AddEffectForm({ effect }: Props) {
           </>
         )}
       />
-      <FormControl fullWidth>
-        <InputLabel shrink id="duration">
-          Duration
-        </InputLabel>
-        <Field as={Select} name={`effects.${effect}.duration`}>
-          {Object.entries(durationObject).map(
-            ([NAME, VALUE]: any, i: number) => (
-              <MenuItem value={VALUE} key={i}>
-                {NAME}
-              </MenuItem>
-            )
-          )}
-        </Field>
-      </FormControl>
+      <Stack>
+        <FormControl fullWidth>
+          <InputLabel shrink id="duration">
+            Duration
+          </InputLabel>
+          <Field as={Select} name={`effects.${effectId}.duration`}>
+            {Object.entries(durationObject).map(
+              ([NAME, VALUE]: any, i: number) => (
+                <MenuItem value={VALUE} key={i}>
+                  {NAME}
+                </MenuItem>
+              )
+            )}
+          </Field>
+        </FormControl>
+      </Stack>
+
+      <Stack>
+        <FormControl fullWidth>
+          <InputLabel shrink id="effectTrigger">
+            Trigger
+          </InputLabel>
+          <Field as={Select} name={`effects.${effectId}.effectTrigger`}>
+            {Object.entries(triggerObject).map(
+              ([NAME, VALUE]: any, i: number) => (
+                <MenuItem value={VALUE} key={i}>
+                  {NAME}
+                </MenuItem>
+              )
+            )}
+          </Field>
+        </FormControl>
+      </Stack>
 
       <Divider />
       <FieldArray
-        name="afterEffectProperties"
+        name={`effects.${effectId}.afterEffectProperties`}
         render={(arrayHelpers) => (
           <>
             {effect.afterEffectProperties.map(
@@ -160,7 +191,7 @@ export default function AddEffectForm({ effect }: Props) {
                     </InputLabel>
                     <Field
                       as={Select}
-                      name={`effects.${effect}.afterEffectProperties.${i}.name`}
+                      name={`effects.${effectId}.afterEffectProperties.${i}.name`}
                     >
                       {orderBy(conditions, ["name"]).map(
                         (condition: any, i: number) => (
@@ -181,7 +212,7 @@ export default function AddEffectForm({ effect }: Props) {
 
                       <Field
                         as={Select}
-                        name={`effects.${effect}.afterEffectProperties.${i}.value`}
+                        name={`effects.${effectId}.afterEffectProperties.${i}.value`}
                       >
                         {range(1, 51).map((damageValue, i) => (
                           <MenuItem value={damageValue} key={i}>
@@ -200,7 +231,7 @@ export default function AddEffectForm({ effect }: Props) {
                       </InputLabel>
                       <Field
                         as={Select}
-                        name={`effects.${i}.afterEffectProperties.${i}.damageType`}
+                        name={`effects.${effectId}.afterEffectProperties.${i}.damageType`}
                       >
                         {damageTypes.map((damageType, i) => (
                           <MenuItem value={damageType} key={i}>
@@ -216,7 +247,7 @@ export default function AddEffectForm({ effect }: Props) {
                     </InputLabel>
                     <Field
                       as={Select}
-                      name={`effects.${effect}.afterEffectProperties.${i}.dutaion`}
+                      name={`effects.${effectId}.afterEffectProperties.${i}.dutaion`}
                     >
                       {Object.entries(durationObject).map(
                         ([NAME, VALUE]: any, i: number) => (
@@ -239,18 +270,28 @@ export default function AddEffectForm({ effect }: Props) {
             )}
             <Button
               type="button"
-              onClick={() =>
-                arrayHelpers.push({
+              onClick={() => {
+                console.log(arrayHelpers);
+                return arrayHelpers.push({
                   name: "Blinded",
                   duration: "saveEnds",
-                })
-              }
+                });
+              }}
             >
               Add Affereffect
             </Button>
           </>
         )}
       />
+      <Stack>
+        <Button
+          onClick={() => {
+            setSelectedEffectIndex(null);
+          }}
+        >
+          Return to Effect List
+        </Button>
+      </Stack>
     </>
   );
 }

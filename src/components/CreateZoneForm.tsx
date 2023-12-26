@@ -2,6 +2,7 @@ import {
   Button,
   Container,
   FormControl,
+  IconButton,
   InputLabel,
   LinearProgress,
   MenuItem,
@@ -13,13 +14,14 @@ import { range } from "lodash";
 import useCreateZone from "../hooks/useCreateZone";
 import { useCombat } from "../hooks/useCombat";
 import AddEffectForm from "./AddEffectForm";
+import { useState } from "react";
+import { TiDelete } from "react-icons/ti";
 
 export default function CreateZoneForm() {
-  const {
-    data: combat,
-    isLoading,
-    isSuccess,
-  } = useCombat("65885770b1681c621a7d34b5");
+  const [selectedEffectIndex, setSelectedEffectIndex] = useState<null | number>(
+    null
+  );
+  const { data: combat, isLoading } = useCombat("65885770b1681c621a7d34b5");
   const { mutate: createZone } = useCreateZone();
 
   const zoneTypesList = ["Zone", "Aura", "Wall"];
@@ -37,12 +39,7 @@ export default function CreateZoneForm() {
         origin: "none",
       }}
       onSubmit={(values, { setSubmitting }) => {
-        console.log(values);
-        // createZone({
-        //   combatId: "test",
-        //   effect: "test",
-        //   effectTrigger: "onEnter",
-        // });
+        createZone(values);
       }}
     >
       {({ handleSubmit, values }) => (
@@ -93,29 +90,65 @@ export default function CreateZoneForm() {
                 render={(arrayHelpers) => (
                   <div>
                     {values.effects && values.effects.length > 0 ? (
-                      values.effects.map((effect, index) => (
-                        <div key={index}>
-                          <AddEffectForm effect={effect} />
-                        </div>
-                      ))
+                      <>
+                        {selectedEffectIndex !== null ? (
+                          <AddEffectForm
+                            effect={values.effects[selectedEffectIndex]}
+                            effectId={selectedEffectIndex}
+                            setSelectedEffectIndex={setSelectedEffectIndex}
+                          />
+                        ) : (
+                          values.effects.map((effect, i) => (
+                            <div key={i}>
+                              <Button
+                                onClick={() => {
+                                  setSelectedEffectIndex(i);
+                                }}
+                              >
+                                Effect {i + 1}
+                              </Button>
+                              <IconButton
+                                style={{ color: "red" }}
+                                onClick={() => arrayHelpers.remove(i)}
+                              >
+                                <TiDelete />
+                              </IconButton>
+                            </div>
+                          ))
+                        )}
+
+                        <Stack>
+                          <Button
+                            type="button"
+                            onClick={() =>
+                              arrayHelpers.push({
+                                afterEffectProperties: [],
+                                effectProperties: [],
+                                duration: "whileInZone",
+                                effectTrigger: "enterZone",
+                              })
+                            }
+                          >
+                            Add a effect
+                          </Button>
+                        </Stack>
+                      </>
                     ) : (
-                      <button
+                      <Button
                         type="button"
-                        onClick={() =>
+                        onClick={() => {
                           arrayHelpers.push({
                             afterEffectProperties: [],
                             effectProperties: [],
-                            duration: "",
-                          })
-                        }
+                            duration: "whileInZone",
+                            effectTrigger: "enterZone",
+                          });
+                          setSelectedEffectIndex(null);
+                        }}
                       >
-                        {/* show this when user has removed all friends from the list */}
                         Add a effect
-                      </button>
+                      </Button>
                     )}
-                    <div>
-                      <button type="submit">Submit</button>
-                    </div>
                   </div>
                 )}
               />

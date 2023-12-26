@@ -1,11 +1,15 @@
 import OBR, { buildShape } from "@owlbear-rodeo/sdk";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import { range } from "lodash";
 
 interface MutateProps {
-  combatId: string;
   effect: string;
   effectTrigger: string;
+  type: string;
+  effects: any[];
+  size: number;
+  origin: string;
 }
 
 export default function useCreateZone() {
@@ -14,11 +18,21 @@ export default function useCreateZone() {
 
   return useMutation({
     mutationFn: createZone,
-    onSuccess: async ({ data }) => {
+    onSuccess: async ({ data }, props) => {
+      const returnFormatedNumber = () => {
+        let number = props.size;
+        if (props.type === "wall") number = 1;
+        else if (props.type === "aura") number = number + 1;
+
+        return number * 5;
+      };
+
+      props.size * 5;
+
       const item = buildShape()
         .id(data.zoneId)
-        .width(30 * 20)
-        .height(30 * 20)
+        .width(30 * returnFormatedNumber())
+        .height(30 * returnFormatedNumber())
         .strokeColor("#1a6aff")
         .fillOpacity(0.5)
         .fillColor("#1a6aff")
@@ -27,7 +41,10 @@ export default function useCreateZone() {
           type: "zone",
         })
         .build();
-      await OBR.scene.items.addItems([item]);
+
+      await OBR.scene.items.addItems(
+        props.type === "wall" ? range(props.size).map(() => item) : [item]
+      );
     },
   });
 }
