@@ -30,7 +30,6 @@ export default function useCreateZone() {
       props.size * 5;
 
       const item = buildShape()
-        .id(data.zoneId)
         .width(30 * returnFormatedNumber())
         .height(30 * returnFormatedNumber())
         .strokeColor("#1a6aff")
@@ -38,6 +37,7 @@ export default function useCreateZone() {
         .fillColor("#1a6aff")
         .shapeType("RECTANGLE")
         .metadata({
+          zoneId: data.zoneId,
           type: "zone",
         })
         .build();

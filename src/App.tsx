@@ -39,6 +39,7 @@ function App() {
     if (OBR.isAvailable && !OBR.isReady) {
       OBR.onReady(() => setReady(true));
     }
+
     if (OBR.isReady) {
       checkForCollision();
     }
