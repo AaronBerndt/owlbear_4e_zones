@@ -8,7 +8,7 @@ interface MutateProps {
 
 export default function useUpdateZone() {
   const createZone = (props: MutateProps) =>
-    axios.post("http://localhost:3000/api/updateZone", props);
+    axios.post("https://4e-pwa.vercel.app/api/updateZone", props);
 
   return useMutation({
     mutationFn: createZone,
