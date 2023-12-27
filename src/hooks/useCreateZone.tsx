@@ -71,9 +71,6 @@ export default function useCreateZone() {
           .build();
       }
 
-      console.log(
-        props.type === "wall" ? range(props.size).map(() => item) : [item]
-      );
       await OBR.scene.items.addItems(
         props.type === "wall"
           ? range(props.size).map(() =>
