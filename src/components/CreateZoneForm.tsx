@@ -137,6 +137,7 @@ export default function CreateZoneForm({ combatId }: Props) {
                                 effectProperties: [],
                                 duration: "whileInZone",
                                 effectTrigger: "enterZone",
+                                whoCanBeEffected: "all",
                               })
                             }
                           >
@@ -153,6 +154,7 @@ export default function CreateZoneForm({ combatId }: Props) {
                             effectProperties: [],
                             duration: "whileInZone",
                             effectTrigger: "enterZone",
+                            whoCanBeEffected: "all",
                           });
                           setSelectedEffectIndex(null);
                         }}

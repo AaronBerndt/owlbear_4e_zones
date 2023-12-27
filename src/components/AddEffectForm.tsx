@@ -46,6 +46,13 @@ export default function AddEffectForm({
     "End of Round": "endOfRound",
   };
 
+  const whoCanBeEffectedObject = {
+    All: "all",
+    "Only Allies": "allies",
+    "Only Other Allies": "otherAllies",
+    "Only Enemies": "enemies",
+  };
+
   const durationObject = {
     "Save Ends": "saveEnds",
     "Enter Zone": "enterZone",
@@ -175,6 +182,23 @@ export default function AddEffectForm({
                 {NAME}
               </MenuItem>
             ))}
+          </Field>
+        </FormControl>
+      </Stack>
+
+      <Stack>
+        <FormControl fullWidth>
+          <InputLabel shrink id="effectTrigger">
+            Who Can Be Effected
+          </InputLabel>
+          <Field as={Select} name={`effects.${effectId}.whoCanBeEffected`}>
+            {Object.entries(whoCanBeEffectedObject).map(
+              ([NAME, VALUE], i: number) => (
+                <MenuItem value={VALUE} key={i}>
+                  {NAME}
+                </MenuItem>
+              )
+            )}
           </Field>
         </FormControl>
       </Stack>
