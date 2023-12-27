@@ -105,7 +105,7 @@ export default function CreateZoneForm() {
                             setSelectedEffectIndex={setSelectedEffectIndex}
                           />
                         ) : (
-                          values.effects.map((effect, i) => (
+                          values.effects.map((_, i) => (
                             <div key={i}>
                               <Button
                                 onClick={() => {
