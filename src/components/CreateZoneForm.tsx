@@ -43,7 +43,7 @@ export default function CreateZoneForm({ combatId }: Props) {
         origin: "none",
       }}
       onSubmit={(values) => {
-        createZone(values);
+        createZone({ ...values, combatId });
       }}
     >
       {({ handleSubmit, values }) => (
