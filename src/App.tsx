@@ -15,10 +15,10 @@ function App() {
     OBR.scene.items.onChange(async (items) => {
       const zones = items.filter(({ metadata }) => metadata.type === "zone");
       const characters = items.filter(({ layer }) => layer === "CHARACTER");
-      for (let [NAME, VALUES] of Object.entries(
+      for (const [NAME, VALUES] of Object.entries(
         groupBy(zones, "metadata.zoneId")
       )) {
-        let inZoneList: any = await Promise.all(
+        const inZoneList: string[][] = await Promise.all(
           VALUES.map(async (zone) => {
             const zoneBounds = await OBR.scene.items.getItemBounds([zone.id]);
 
@@ -30,7 +30,7 @@ function App() {
                 if (isCollision(characterBounds, zoneBounds)) {
                   return id;
                 }
-                return null;
+                return "";
               })
             );
 
@@ -38,11 +38,11 @@ function App() {
           })
         );
 
-        inZoneList = uniq(inZoneList.flat());
+        const finalList: string[] = uniq(inZoneList.flat());
 
         updateZone({
           _id: NAME,
-          combatantsInZoneToChange: inZoneList,
+          combatantsInZoneToChange: finalList,
         });
       }
     });

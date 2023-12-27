@@ -46,6 +46,8 @@ export type EffectProperty = {
   value?: number;
   damageType?: string;
   duration?: Duration;
+  zoneId?: string;
+  effectTrigger?: string;
 };
 export type Duration =
   | "saveEnds"
@@ -59,3 +61,13 @@ export type Duration =
   | "endOfEffectedTurn"
   | "nextAttack"
   | "permanent";
+
+export type Effect = {
+  combatId: string;
+  effectProperties: EffectProperty[];
+  duration: Duration;
+  effecterId: string;
+  source: string;
+  effecterName: string;
+  afterEffectProperties: EffectProperty[];
+};

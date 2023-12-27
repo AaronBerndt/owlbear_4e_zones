@@ -3,7 +3,7 @@ import axios from "axios";
 
 interface MutateProps {
   _id: string;
-  combatantsInZoneToChange: any;
+  combatantsInZoneToChange: string[];
 }
 
 export default function useUpdateZone() {

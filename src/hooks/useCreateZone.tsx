@@ -2,12 +2,11 @@ import OBR, { buildShape } from "@owlbear-rodeo/sdk";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { range } from "lodash";
+import { Effect } from "../types";
 
 interface MutateProps {
-  effect: string;
-  effectTrigger: string;
   type: string;
-  effects: any[];
+  effects: Effect[];
   size: number;
   origin: string;
 }

@@ -4,7 +4,7 @@ import axios from "axios";
 export const KEY = "Fetch Combats";
 export const FETCH_COMBAT_KEY = "Fetch Combat";
 
-export function useCombat(combatId?: any) {
+export function useCombat(combatId?: string) {
   const fetchCombat = () =>
     axios.get(`https://4e-pwa.vercel.app/api/combats?_id=${combatId}`);
   return useQuery({

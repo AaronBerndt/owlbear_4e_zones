@@ -9,10 +9,16 @@ import {
   Divider,
 } from "@mui/material";
 import { FieldArray, Field } from "formik";
-import { values, orderBy, range } from "lodash";
+import { orderBy, range } from "lodash";
 import { TiDelete } from "react-icons/ti";
 import { conditions, damageTypes } from "../constants";
-import { EffectProperty } from "../types";
+import { Effect, EffectProperty } from "../types";
+
+interface Props {
+  effect: Effect;
+  effectId: number;
+  setSelectedEffectIndex: (value: string | null) => null;
+}
 
 export default function AddEffectForm({
   effect,
@@ -76,7 +82,7 @@ export default function AddEffectForm({
                       name={`effects.${effectId}.effectProperties.${i}.name`}
                     >
                       {orderBy(conditions, ["name"]).map(
-                        (condition: any, i: number) => (
+                        (condition: { name: string }, i: number) => (
                           <MenuItem value={condition.name} key={i}>
                             {condition.name}
                           </MenuItem>
@@ -149,13 +155,11 @@ export default function AddEffectForm({
             Duration
           </InputLabel>
           <Field as={Select} name={`effects.${effectId}.duration`}>
-            {Object.entries(durationObject).map(
-              ([NAME, VALUE]: any, i: number) => (
-                <MenuItem value={VALUE} key={i}>
-                  {NAME}
-                </MenuItem>
-              )
-            )}
+            {Object.entries(durationObject).map(([NAME, VALUE], i: number) => (
+              <MenuItem value={VALUE} key={i}>
+                {NAME}
+              </MenuItem>
+            ))}
           </Field>
         </FormControl>
       </Stack>
@@ -166,13 +170,11 @@ export default function AddEffectForm({
             Trigger
           </InputLabel>
           <Field as={Select} name={`effects.${effectId}.effectTrigger`}>
-            {Object.entries(triggerObject).map(
-              ([NAME, VALUE]: any, i: number) => (
-                <MenuItem value={VALUE} key={i}>
-                  {NAME}
-                </MenuItem>
-              )
-            )}
+            {Object.entries(triggerObject).map(([NAME, VALUE], i: number) => (
+              <MenuItem value={VALUE} key={i}>
+                {NAME}
+              </MenuItem>
+            ))}
           </Field>
         </FormControl>
       </Stack>
@@ -183,7 +185,7 @@ export default function AddEffectForm({
         render={(arrayHelpers) => (
           <>
             {effect.afterEffectProperties.map(
-              (effectProperty: EffectProperty, i) => (
+              (effectProperty: EffectProperty, i: number) => (
                 <Stack direction="row" spacing={2} key={i}>
                   <FormControl fullWidth>
                     <InputLabel shrink id="name">
@@ -194,7 +196,7 @@ export default function AddEffectForm({
                       name={`effects.${effectId}.afterEffectProperties.${i}.name`}
                     >
                       {orderBy(conditions, ["name"]).map(
-                        (condition: any, i: number) => (
+                        (condition: { name: string }, i: number) => (
                           <option value={condition.name} key={i}>
                             {condition.name}
                           </option>
@@ -250,7 +252,7 @@ export default function AddEffectForm({
                       name={`effects.${effectId}.afterEffectProperties.${i}.dutaion`}
                     >
                       {Object.entries(durationObject).map(
-                        ([NAME, VALUE]: any, i: number) => (
+                        ([NAME, VALUE], i: number) => (
                           <MenuItem value={VALUE} key={i}>
                             {NAME}
                           </MenuItem>
@@ -271,7 +273,6 @@ export default function AddEffectForm({
             <Button
               type="button"
               onClick={() => {
-                console.log(arrayHelpers);
                 return arrayHelpers.push({
                   name: "Blinded",
                   duration: "saveEnds",

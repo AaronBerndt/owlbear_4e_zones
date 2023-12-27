@@ -38,7 +38,7 @@ export default function CreateZoneForm() {
         size: 1,
         origin: "none",
       }}
-      onSubmit={(values, { setSubmitting }) => {
+      onSubmit={(values) => {
         createZone(values);
       }}
     >
@@ -51,7 +51,7 @@ export default function CreateZoneForm() {
                   Zone Type
                 </InputLabel>
                 <Field as={Select} name="type">
-                  {zoneTypesList.map((zoneType: any, i: number) => (
+                  {zoneTypesList.map((zoneType: string, i: number) => (
                     <MenuItem value={zoneType.toLowerCase()} key={i}>
                       {zoneType}
                     </MenuItem>
@@ -63,7 +63,7 @@ export default function CreateZoneForm() {
                   Zone Size
                 </InputLabel>
                 <Field as={Select} name="size">
-                  {range(1, 11).map((zoneSize: any, i: number) => (
+                  {range(1, 11).map((zoneSize: number, i: number) => (
                     <MenuItem value={zoneSize} key={i}>
                       {zoneSize}
                     </MenuItem>
@@ -77,12 +77,19 @@ export default function CreateZoneForm() {
                 <Field as={Select} name="origin">
                   <MenuItem value={"none"}>None</MenuItem>
                   {combat.combatants
-                    .filter((combatant) => combatant)
-                    .map(({ name, _id }: any, i: number) => (
-                      <MenuItem value={_id} key={i}>
-                        {name}
-                      </MenuItem>
-                    ))}
+                    .filter(
+                      (combatant: { name: string; _id: string }) => combatant
+                    )
+                    .map(
+                      (
+                        { name, _id }: { name: string; _id: string },
+                        i: number
+                      ) => (
+                        <MenuItem value={_id} key={i}>
+                          {name}
+                        </MenuItem>
+                      )
+                    )}
                 </Field>
               </FormControl>
               <FieldArray
