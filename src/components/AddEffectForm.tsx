@@ -10,7 +10,6 @@ import {
 } from "@mui/material";
 import { FieldArray, Field } from "formik";
 import { orderBy, range } from "lodash";
-import { SetStateAction } from "react";
 import { TiDelete } from "react-icons/ti";
 import { conditions, damageTypes } from "../constants";
 import { Effect, EffectProperty } from "../types";
@@ -18,7 +17,7 @@ import { Effect, EffectProperty } from "../types";
 interface Props {
   effect: Effect;
   effectId: number;
-  setSelectedEffectIndex: SetStateAction<number | null>;
+  setSelectedEffectIndex: (value: number | null) => void;
 }
 
 export default function AddEffectForm({
