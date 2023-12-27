@@ -17,11 +17,15 @@ import AddEffectForm from "./AddEffectForm";
 import { useState } from "react";
 import { TiDelete } from "react-icons/ti";
 
-export default function CreateZoneForm() {
+interface Props {
+  combatId: string;
+}
+
+export default function CreateZoneForm({ combatId }: Props) {
   const [selectedEffectIndex, setSelectedEffectIndex] = useState<null | number>(
     null
   );
-  const { data: combat, isLoading } = useCombat("65885770b1681c621a7d34b5");
+  const { data: combat, isLoading } = useCombat(combatId);
   const { mutate: createZone } = useCreateZone();
 
   const zoneTypesList = ["Zone", "Aura", "Wall"];

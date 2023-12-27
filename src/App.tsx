@@ -2,13 +2,22 @@ import { groupBy, uniq } from "lodash";
 import { useEffect, useState } from "react";
 import OBR from "@owlbear-rodeo/sdk";
 import { isCollision } from "./utils/collision";
-import { Card, Stack } from "@mui/material";
+import { Card, LinearProgress, Stack } from "@mui/material";
 import useUpdateZone from "./hooks/useUpdateZone";
 import CreateZoneForm from "./components/CreateZoneForm";
 
 function App() {
+  const [combatId, setCombatId] = useState("");
   const [ready, setReady] = useState(false);
   const { mutate: updateZone } = useUpdateZone();
+
+  const fetchCombatIdFromMetadata = async () => {
+    const metadata = await OBR.room.getMetadata();
+
+    if (metadata.combatId !== "") {
+      setCombatId(metadata.combatId as string);
+    }
+  };
 
   const checkForCollision = async () => {
     await OBR.scene.items.getItems();
@@ -53,15 +62,23 @@ function App() {
       OBR.onReady(() => setReady(true));
     }
 
-    if (OBR.isReady) {
+    if (OBR.isReady && combatId) {
       checkForCollision();
     }
-  }, [ready]);
+
+    if (!combatId) {
+      fetchCombatIdFromMetadata();
+    }
+  }, [ready, combatId]);
+
+  if (!combatId) {
+    return <LinearProgress />;
+  }
 
   return (
     <Stack>
       <Card>
-        <CreateZoneForm />
+        <CreateZoneForm combatId={combatId} />
       </Card>
     </Stack>
   );
