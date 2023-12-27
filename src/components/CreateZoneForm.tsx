@@ -102,7 +102,7 @@ export default function CreateZoneForm() {
                           <AddEffectForm
                             effect={values.effects[selectedEffectIndex]}
                             effectId={selectedEffectIndex}
-                            setSelectedEffectIndex={setSelectedEffectIndex}
+                            setSelectedEffectIndex={selectedEffectIndex}
                           />
                         ) : (
                           values.effects.map((effect, i) => (
