@@ -32,7 +32,6 @@ export default function useCreateZone() {
       props.size * 5;
 
       let item = buildShape()
-        .id(data.zoneId)
         .width(30 * returnFormatedNumber())
         .height(30 * returnFormatedNumber())
         .strokeColor("#1a6aff")
@@ -54,7 +53,6 @@ export default function useCreateZone() {
         const height = 30 * returnFormatedNumber(Math.trunc(scale));
 
         item = buildShape()
-          .id(data.zoneId)
           .position({
             x: x - width / 2,
             y: y - height / 2,
@@ -72,8 +70,27 @@ export default function useCreateZone() {
           .attachedTo(props.origin)
           .build();
       }
-      await OBR.scene.items.addItems(
+
+      console.log(
         props.type === "wall" ? range(props.size).map(() => item) : [item]
+      );
+      await OBR.scene.items.addItems(
+        props.type === "wall"
+          ? range(props.size).map(() =>
+              buildShape()
+                .width(30 * returnFormatedNumber())
+                .height(30 * returnFormatedNumber())
+                .strokeColor("#1a6aff")
+                .fillOpacity(0.5)
+                .fillColor("#1a6aff")
+                .shapeType("RECTANGLE")
+                .metadata({
+                  zoneId: data.zoneId,
+                  type: "zone",
+                })
+                .build()
+            )
+          : [item]
       );
     },
   });

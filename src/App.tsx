@@ -1,3 +1,4 @@
+import { groupBy, uniq } from "lodash";
 import { useEffect, useState } from "react";
 import OBR from "@owlbear-rodeo/sdk";
 import { isCollision } from "./utils/collision";
@@ -14,21 +15,33 @@ function App() {
     OBR.scene.items.onChange(async (items) => {
       const zones = items.filter(({ metadata }) => metadata.type === "zone");
       const characters = items.filter(({ layer }) => layer === "CHARACTER");
-      for (let zone of zones) {
-        const zoneBounds = await OBR.scene.items.getItemBounds([zone.id]);
-        let inZoneList = await Promise.all(
-          characters.map(async ({ id }) => {
-            const characterBounds = await OBR.scene.items.getItemBounds([id]);
-            if (isCollision(characterBounds, zoneBounds)) {
-              return id;
-            }
-            return null;
+      for (let [NAME, VALUES] of Object.entries(
+        groupBy(zones, "metadata.zoneId")
+      )) {
+        let inZoneList: any = await Promise.all(
+          VALUES.map(async (zone) => {
+            const zoneBounds = await OBR.scene.items.getItemBounds([zone.id]);
+
+            const collisionList = await Promise.all(
+              characters.map(async ({ id }) => {
+                const characterBounds = await OBR.scene.items.getItemBounds([
+                  id,
+                ]);
+                if (isCollision(characterBounds, zoneBounds)) {
+                  return id;
+                }
+                return null;
+              })
+            );
+
+            return collisionList.filter((id) => id);
           })
         );
-        inZoneList = inZoneList.filter((id) => id);
+
+        inZoneList = uniq(inZoneList.flat());
 
         updateZone({
-          _id: zone.id,
+          _id: NAME,
           combatantsInZoneToChange: inZoneList,
         });
       }
