@@ -9,6 +9,7 @@ interface MutateProps {
   effects: Effect[];
   size: number;
   origin: string;
+  combatId: string;
 }
 
 export default function useCreateZone() {
