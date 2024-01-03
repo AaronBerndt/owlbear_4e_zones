@@ -5,11 +5,34 @@ import { isCollision } from "./utils/collision";
 import { Card, LinearProgress, Stack } from "@mui/material";
 import useUpdateZone from "./hooks/useUpdateZone";
 import CreateZoneForm from "./components/CreateZoneForm";
+import Pusher from "pusher-js";
+import { PusherProivder } from "./context/PusherContext";
+import usePusher from "./hooks/usePusher";
 
 function App() {
+  const [pusher, setPusher] = useState<Pusher | null>(null);
+  useEffect(() => {
+    const pusherObject = new Pusher(process.env.PUBLIC_KEY!, {
+      cluster: "us2",
+    });
+    setPusher(pusherObject);
+  }, []);
+
+  if (!pusher) {
+    return <LinearProgress />;
+  }
+
+  return (
+    <PusherProivder pusher={pusher}>
+      <AppContent />;
+    </PusherProivder>
+  );
+}
+function AppContent() {
   const [combatId, setCombatId] = useState("");
   const [ready, setReady] = useState(false);
   const { mutate: updateZone } = useUpdateZone();
+  usePusher();
 
   const fetchCombatIdFromMetadata = async () => {
     const metadata = await OBR.room.getMetadata();
@@ -49,10 +72,10 @@ function App() {
 
         const finalList: string[] = uniq(inZoneList.flat());
 
-        updateZone({
-          _id: NAME,
-          combatantsInZoneToChange: finalList,
-        });
+        // updateZone({
+        //   _id: NAME,
+        //   combatantsInZoneToChange: finalList,
+        // });
       }
     });
   };
