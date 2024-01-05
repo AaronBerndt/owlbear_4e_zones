@@ -18,9 +18,20 @@ function App() {
       setCombatId(metadata.combatId as string);
     }
   };
+  async function initScene() {
+    OBR.scene.onReadyChange((isReady) => {
+    if (isReady) {
+      checkForCollision();
+    }
+  });
+
+  const isReady = await OBR.scene.isReady();
+  if (isReady) {
+    checkForCollision();
+  }
+}
 
   const checkForCollision = async () => {
-    await OBR.scene.items.getItems();
     OBR.scene.items.onChange(async (items) => {
       const zones = items.filter(({ metadata }) => metadata.type === "zone");
       const characters = items.filter(({ layer }) => layer === "CHARACTER");
@@ -63,12 +74,15 @@ function App() {
     }
 
     if (OBR.isReady && combatId) {
-      checkForCollision();
+      console.log("checking for collision");
+      initScene();
     }
 
-    if (!combatId) {
+    if (!combatId && OBR.isReady) {
+      console.log("Fetching combat id from metadata");
       fetchCombatIdFromMetadata();
     }
+
   }, [ready, combatId]);
 
   if (!combatId) {
